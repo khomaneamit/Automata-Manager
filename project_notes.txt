@@ -1,0 +1,24 @@
+Finite Automata
+M = (states, alphabets, transitions, initial state, final states)
+
+M : array of Object class to store different class objects
+states: HashSet<String> no duplicate allowed
+alphabets: HashSet<Character> no duplication
+transitions: HashMap<state, HashMap<alphabet, state>>
+initial state: String belongs to states
+final state : HashSet<String> belongs to set
+
+
+methods to implement
+a. State
+1. create state
+2. delete state
+3. rename state
+4. make initial state
+5. make final state
+
+b. Transitions
+1. make transition
+2. add alphabets
+3. change alphabets
+4. delete transition

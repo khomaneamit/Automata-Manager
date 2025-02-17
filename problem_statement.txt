@@ -1,0 +1,13 @@
+Finite Automata and Regualar Expressions are important ideas in the study of how computers understand languages. This project is about making a tool where user can draw, check and run deterministic Finite Automata(DFA), Nondeterministic Finite Automata(NFA). It also allows user to convert Regular Expressions into NFA and equivalent DFA. basically, user will have a screen where user can design these these automata, give them some input and see if they accept it.The idea is to make it easy for students to understand and teachers to teach how these things work.
+
+Weekly plan:
+1. Design the user interface and select a suitable data structure for storing automata.
+2. Implement the basic UI and enable drawing of states.
+3. Develop the functionality to add and edit states and transitions for DFA.
+4. Implement DFA simulation with single input strings and step by step execution.
+5. Enable testing DFA with multiple input strings from a file.
+6. Improve the UI and fix bugs in the DFA implementation.
+7. Extend the tool to support NFA features, including epsilon transitions.
+8. Implement NFA simulation and visualization of states.
+9. Implement NFA to DFA conversion Algorithm.
+10. Implement regular expression parsing and conversion to NFA and DFA.   
