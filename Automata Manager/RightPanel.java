@@ -5,16 +5,17 @@ import java.awt.event.*;
 
 class RightPanel extends JPanel 
 {
+    private DFA struct = new DFA();
     private final Map<String, Circle> circles = new LinkedHashMap<>();
     private int counter = 0;
     private Circle selectedCircle = null;
     private int offsetX, offsetY;
-
+    
     public RightPanel() 
     {
         this.setLayout(null);
         setBackground(Color.WHITE);
-
+    
         addMouseListener(new MouseAdapter() 
         {
             public void mousePressed(MouseEvent e) 
@@ -31,13 +32,13 @@ class RightPanel extends JPanel
                     }
                 }
             }
-
+    
             public void mouseReleased(MouseEvent e) 
             {
                 selectedCircle = null;
             }
         });
-
+    
         addMouseMotionListener(new MouseAdapter() 
         {
             public void mouseDragged(MouseEvent e) 
@@ -51,7 +52,7 @@ class RightPanel extends JPanel
             }
         });
     }
-
+    
     public void addCircle() 
     {
         int x = 50 + (counter * 20) % 300;
@@ -61,13 +62,17 @@ class RightPanel extends JPanel
         counter++;
         repaint();
     }
-
+    
     protected void paintComponent(Graphics g) 
     {
-        super.paintComponent(g);
+        @SuppressWarnings("unchecked")
+        HashSet<Circle> states = (HashSet<Circle>) struct.getObj(0);
+        states.clear();
 
+        super.paintComponent(g);
         for(Circle circle : circles.values()) 
         {
+            states.add(circle);
             g.setColor(Color.WHITE);
             g.fillOval(circle.x, circle.y, circle.radius * 2, circle.radius * 2);
             g.setColor(Color.BLACK);

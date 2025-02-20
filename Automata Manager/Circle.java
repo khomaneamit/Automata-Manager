@@ -3,6 +3,7 @@ public class Circle
     int x, y, radius;
     String name;
 
+    public Circle(){}
     public Circle(String name, int x, int y, int radius) 
     {
         this.name = name;
