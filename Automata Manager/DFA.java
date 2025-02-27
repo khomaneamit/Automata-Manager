@@ -1,21 +1,43 @@
 import java.util.*;
 
-public class DFA 
-{
-    private Object[] obj;
-    public DFA()
-    {
-        obj = new Object[5];
-        obj[0] = new HashSet<Circle>();
-        obj[1] = new HashSet<Character>();
-        obj[2] = new HashMap<Circle, HashMap<Character, Circle>>();
-        obj[3] = null;
-        obj[4] = new HashSet<Circle>();
+public class DFA {
+    private Circle initialState = null;
+    private HashSet<Circle> states = new HashSet<>();
+    private HashSet<Circle> finalStates = new HashSet<>();
+
+    public void addState(Circle state) {
+        states.add(state);
     }
 
-    public Object getObj(int index) {
-        System.out.println(obj[0]);
-        return obj[index];
+    public void removeState(Circle state) {
+        states.remove(state);
+        finalStates.remove(state);
+        if (initialState == state) {
+            initialState = null;
+        }
     }
-    
+
+    public void setInitialState(Circle state) {
+        if (initialState == state) {
+            initialState = null; // Toggle back to non-initial
+        } else {
+            initialState = state;
+        }
+    }
+
+    public Circle getInitialState() {
+        return initialState;
+    }
+
+    public void toggleFinalState(Circle state) {
+        if (finalStates.contains(state)) {
+            finalStates.remove(state);
+        } else {
+            finalStates.add(state);
+        }
+    }
+
+    public boolean isFinalState(Circle state) {
+        return finalStates.contains(state);
+    }
 }
