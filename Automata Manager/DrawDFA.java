@@ -16,5 +16,6 @@ class DrawDFA extends JPanel {
         this.add(right, BorderLayout.CENTER);
 
         left.addStateButton.addActionListener(e -> right.addCircle());
+        left.addTransitionButton.addActionListener(e -> right.addTransition());
     }
 }
