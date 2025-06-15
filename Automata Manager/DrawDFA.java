@@ -5,17 +5,32 @@ class DrawDFA extends JPanel {
     JButton addStateButton, addTransitionButton, runDFAButton;
     LeftPanel left;
     RightPanel right;
+    BottomPanel runDFA;
 
     public DrawDFA() {
-        this.setLayout(new BorderLayout());
+        JFrame frame = new JFrame("AUTOMATA MANAGER");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setLayout(new BorderLayout());
+        frame.setVisible(true);
+
+        frame.setLayout(new BorderLayout());
 
         left = new LeftPanel();
-        this.add(left, BorderLayout.WEST);
+        frame.add(left, BorderLayout.WEST);
 
         right = new RightPanel();
-        this.add(right, BorderLayout.CENTER);
+        frame.add(right, BorderLayout.CENTER);
+
+        runDFA = new BottomPanel();
+        frame.add(runDFA, BorderLayout.SOUTH);
 
         left.addStateButton.addActionListener(e -> right.addCircle());
         left.addTransitionButton.addActionListener(e -> right.addTransition());
+    }
+
+    public static void main(String args[])
+    {
+        new DrawDFA();
     }
 }
