@@ -142,6 +142,11 @@ class RightPanel extends JPanel {
         return transitions;
     }
 
+    public DFA getDFA()
+    {
+        return struct;
+    }
+
     public void addCircle() {
         int x = 50 + (counter * 20) % 300;
         int y = 50 + (counter * 20) % 300;

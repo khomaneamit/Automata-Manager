@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -7,10 +8,16 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 public class BottomPanel extends JPanel{
+
+    //for add transition
+    private final List<Transition> transitions = new ArrayList<>();
+    private DFA struct = new DFA();
+
     BottomPanel()
     {
         System.out.println("constructor called");
@@ -21,7 +28,9 @@ public class BottomPanel extends JPanel{
         setBorder(border);
     }
 
-    public boolean validateDFA(List<Transition> transitions) {
+    public boolean validateDFA(List<Transition> transitions, DFA struct) {
+        struct = this.struct;
+        transitions = this.transitions;
         Set<String> allSymbols = new HashSet<>();              // All input symbols
         Set<Circle> allStates = new HashSet<>();               // All states (from + to)
         Map<Circle, Set<String>> stateToSymbols = new HashMap<>();  // Symbols per state
@@ -35,7 +44,10 @@ public class BottomPanel extends JPanel{
             // Step 2: Track used symbols per source state
             Set<String> used = stateToSymbols.getOrDefault(t.from, new HashSet<>());
             if (used.contains(t.symbol)) {
-                System.out.println("❌ Duplicate transition for symbol '" + t.symbol + "' from state " + t.from.name);
+                JOptionPane.showMessageDialog(null,
+                    "❌ Duplicate transition for symbol '" + t.symbol + "' from state " + t.from.name,
+                    "DFA Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
                 return false;
             }
             used.add(t.symbol);
@@ -48,14 +60,31 @@ public class BottomPanel extends JPanel{
             if (!usedSymbols.containsAll(allSymbols)) {
                 Set<String> missing = new HashSet<>(allSymbols);
                 missing.removeAll(usedSymbols);
-                System.out.println("❌ State " + state.name + " missing transitions for symbols: " + missing);
+                JOptionPane.showMessageDialog(null,
+                    "❌ State " + state.name + " is missing transitions for symbols: " + missing,
+                    "DFA Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
-    
+        
+        if(struct.getInitialState() == null){
+            JOptionPane.showMessageDialog(null,
+                    "❌ not set initial state",
+                    "DFA Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if(struct.getFinalStates().isEmpty()){
+            JOptionPane.showMessageDialog(null,
+                    "❌ not set final state",
+                    "DFA Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         System.out.println("✅ DFA is valid: all states have transitions for all symbols and no duplicates.");
         return true;
     }
-    
-    
 }

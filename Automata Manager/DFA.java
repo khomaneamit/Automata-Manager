@@ -47,4 +47,8 @@ public class DFA {
     public String getallStates(){
         return statenames.toString();
     }
+
+    public HashSet<Circle> getFinalStates(){
+        return finalStates;
+    }
 }

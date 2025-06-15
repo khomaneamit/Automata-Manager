@@ -27,7 +27,7 @@ class DrawDFA extends JPanel {
 
         left.addStateButton.addActionListener(e -> right.addCircle());
         left.addTransitionButton.addActionListener(e -> right.addTransition());
-        left.runDFAButton.addActionListener(e -> runDFA.validateDFA(right.getTransitions()));
+        left.runDFAButton.addActionListener(e -> runDFA.validateDFA(right.getTransitions(), right.getDFA()));
     }
 
     public static void main(String args[])
