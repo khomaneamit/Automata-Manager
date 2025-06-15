@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.QuadCurve2D;
 import java.util.*;
+import java.util.List;
 
 class RightPanel extends JPanel {
     private DFA struct = new DFA();
@@ -11,9 +12,12 @@ class RightPanel extends JPanel {
     private Circle selectedCircle = null;
     private int offsetX, offsetY;
     private JPopupMenu popupMenu;
+    private Transition selectedTransition = null;
+    private boolean draggingControlPoint = false;
     
     //for add transition
-    HashMap<Circle, HashMap<String, Circle>> transition = new HashMap<>();
+    private final List<Transition> transitions = new ArrayList<>();
+
 
     public RightPanel() {
         setLayout(null);
@@ -68,8 +72,17 @@ class RightPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+
+                selectedTransition = null;
+                for (Transition t : transitions) {
+                    if (t.isNearControlPoint(e.getX(), e.getY())) {
+                        selectedTransition = t;
+                        draggingControlPoint = true;
+                        return;
+                    }
+                }
+
                 Circle circleAtPosition = null;
-                
                 // Find if a circle was clicked
                 for (Circle circle : circles.values()) {
                     if (circle.contains(e.getX(), e.getY())) {
@@ -100,12 +113,21 @@ class RightPanel extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                draggingControlPoint = false;
+                selectedTransition = null;
             }
         });
 
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
+
+                if (draggingControlPoint && selectedTransition != null) {
+                    selectedTransition.controlPoint.setLocation(e.getX(), e.getY());
+                    repaint();
+                    return;
+                }
+
                 if (selectedCircle != null && !SwingUtilities.isRightMouseButton(e)) {
                     selectedCircle.x = e.getX() - offsetX;
                     selectedCircle.y = e.getY() - offsetY;
@@ -113,6 +135,11 @@ class RightPanel extends JPanel {
                 }
             }
         });
+    }
+
+    public List<Transition> getTransitions()
+    {
+        return transitions;
     }
 
     public void addCircle() {
@@ -177,14 +204,14 @@ class RightPanel extends JPanel {
                 }
             }
 
-            HashMap<String, Circle> t1 = transition.getOrDefault(inputCircle, new HashMap<String, Circle>());
-            t1.put(inputSymbol, outputCircle);
-            transition.put(inputCircle, t1);
-
-            t1 = transition.get(inputCircle);
-            outputCircle = t1.get(inputSymbol);
-
-            System.out.println(inputCircle.name+" "+inputSymbol+" "+outputCircle.name);
+            if (inputCircle != null && outputCircle != null) {
+                Point controlPoint = new Point((inputCircle.x + outputCircle.x) / 2 + 40,
+                                               (inputCircle.y + outputCircle.y) / 2 - 40);
+            
+                transitions.add(new Transition(inputCircle, inputSymbol, outputCircle, controlPoint));
+                repaint();
+            }
+            
             repaint();
         }
         
@@ -239,27 +266,14 @@ class RightPanel extends JPanel {
 
         // Draw transitions (arrows)
         g.setColor(Color.BLACK);
-        for (Circle fromCircle : transition.keySet()) {
-            HashMap<String, Circle> transitionsForState = transition.get(fromCircle);
-        
-            for (String symbol : transitionsForState.keySet()) {
-                Circle toCircle = transitionsForState.get(symbol);
-            
-                //System.out.println("from circle : x = "+fromCircle.x+" , y = "+fromCircle.y+" , r = "+fromCircle.radius);
-                //System.out.println("toCircle circle : x = "+toCircle.x+" , y = "+toCircle.y+" , r = "+toCircle.radius);
-                int fromX = fromCircle.x + fromCircle.radius;
-                int fromY = fromCircle.y + fromCircle.radius;
-                int toX = toCircle.x + toCircle.radius;
-                int toY = toCircle.y + toCircle.radius;
-            
-                // Draw arrow line
-                drawArrow(g2d, fromX, fromY, toX, toY, (toX+fromX)/2, (toY+fromY)/2, symbol);
-                if(fromCircle.equals(toCircle))
-                {
-                    drawArrow(g2d, fromX, fromY, toX, toY, toX-100, toY-100, symbol);
-                }
-            }
+        for (Transition t : transitions) {
+            int fromX = t.from.x + t.from.radius;
+            int fromY = t.from.y + t.from.radius;
+            int toX = t.to.x + t.to.radius;
+            int toY = t.to.y + t.to.radius;
+            drawArrow(g2d, fromX, fromY, toX, toY, t.controlPoint.x, t.controlPoint.y, t.symbol);
         }
+        
 
         for (Circle circle : circles.values()) {
             // Highlight selected circle
