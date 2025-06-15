@@ -83,8 +83,6 @@ public class BottomPanel extends JPanel{
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-        System.out.println("✅ DFA is valid: all states have transitions for all symbols and no duplicates.");
         return true;
     }
 }

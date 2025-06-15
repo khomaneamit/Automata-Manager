@@ -14,6 +14,9 @@ class RightPanel extends JPanel {
     private JPopupMenu popupMenu;
     private Transition selectedTransition = null;
     private boolean draggingControlPoint = false;
+    private JPopupMenu transitionPopupMenu;
+    private Transition clickedTransition = null;
+
     
     //for add transition
     private final List<Transition> transitions = new ArrayList<>();
@@ -31,6 +34,21 @@ class RightPanel extends JPanel {
         popupMenu.add(setInitial);
         popupMenu.add(setFinal);
         popupMenu.add(deleteState);
+
+        // Popup menu for transitions
+        transitionPopupMenu = new JPopupMenu();
+        JMenuItem deleteTransition = new JMenuItem("Delete Transition");
+        transitionPopupMenu.add(deleteTransition);
+
+        deleteTransition.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (clickedTransition != null) {
+                    transitions.remove(clickedTransition);
+                    clickedTransition = null;
+                    repaint();
+                }
+            }
+        });
 
         // Set Initial State
         setInitial.addActionListener(new ActionListener() {
@@ -72,35 +90,40 @@ class RightPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-
-                selectedTransition = null;
+                // First check for transition control point
+                clickedTransition = null;
                 for (Transition t : transitions) {
                     if (t.isNearControlPoint(e.getX(), e.getY())) {
-                        selectedTransition = t;
-                        draggingControlPoint = true;
-                        return;
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            clickedTransition = t;
+                            transitionPopupMenu.show(RightPanel.this, e.getX(), e.getY());
+                            return;
+                        } else if (SwingUtilities.isLeftMouseButton(e)) {
+                            selectedTransition = t;
+                            draggingControlPoint = true;
+                            return;
+                        }
                     }
                 }
-
+            
+                // If not a control point, check for states (existing code below)
                 Circle circleAtPosition = null;
-                // Find if a circle was clicked
                 for (Circle circle : circles.values()) {
                     if (circle.contains(e.getX(), e.getY())) {
                         circleAtPosition = circle;
                         break;
                     }
                 }
-                
+            
                 if (SwingUtilities.isRightMouseButton(e)) {
                     if (circleAtPosition != null) {
                         selectedCircle = circleAtPosition;
                         offsetX = e.getX() - circleAtPosition.x;
                         offsetY = e.getY() - circleAtPosition.y;
                         repaint();
-                        // Show popup menu
                         popupMenu.show(RightPanel.this, e.getX(), e.getY());
                     }
-                } else { // Left mouse button
+                } else {
                     selectedCircle = circleAtPosition;
                     if (selectedCircle != null) {
                         offsetX = e.getX() - selectedCircle.x;
@@ -110,6 +133,7 @@ class RightPanel extends JPanel {
                     repaint();
                 }
             }
+            
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -216,7 +240,6 @@ class RightPanel extends JPanel {
                 transitions.add(new Transition(inputCircle, inputSymbol, outputCircle, controlPoint));
                 repaint();
             }
-            
             repaint();
         }
         
