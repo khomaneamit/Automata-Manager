@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -10,27 +11,54 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.Border;
 
 public class BottomPanel extends JPanel{
 
     //for add transition
-    private final List<Transition> transitions = new ArrayList<>();
+    private List<Transition> transitions = new ArrayList<>();
     private DFA struct = new DFA();
+    private JTable table;
+    private JScrollPane scrollPane;
 
     BottomPanel()
     {
-        System.out.println("constructor called");
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(200, 300));
-        setLayout(null);
+        setLayout(new BorderLayout());
         Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
         setBorder(border);
     }
 
+    public void showTransitionTable() {
+        removeAll(); // Clear previous components like validation result or table
+
+        String[] columns = {"From State", "Input Symbol", "To State"};
+        String[][] data = new String[transitions.size()][3];
+
+        for (int i = 0; i < transitions.size(); i++) {
+            Transition t = transitions.get(i);
+            data[i][0] = t.from.name;
+            data[i][1] = t.symbol;
+            data[i][2] = t.to.name;
+        }
+
+        table = new JTable(data, columns);
+        table.setEnabled(false); // read-only
+
+        scrollPane = new JScrollPane(table);
+        add(scrollPane, BorderLayout.EAST);
+
+        revalidate();
+        repaint();
+    }
+
+
     public boolean validateDFA(List<Transition> transitions, DFA struct) {
-        struct = this.struct;
-        transitions = this.transitions;
+        this.struct = struct;
+        this.transitions = transitions;
         Set<String> allSymbols = new HashSet<>();              // All input symbols
         Set<Circle> allStates = new HashSet<>();               // All states (from + to)
         Map<Circle, Set<String>> stateToSymbols = new HashMap<>();  // Symbols per state
@@ -83,6 +111,8 @@ public class BottomPanel extends JPanel{
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
+
+        showTransitionTable();
         return true;
     }
 }

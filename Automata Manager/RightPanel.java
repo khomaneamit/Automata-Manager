@@ -54,7 +54,7 @@ class RightPanel extends JPanel {
         setInitial.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedCircle != null) {
-                    System.out.println("Setting " + selectedCircle.name + " as Initial State");
+                    //System.out.println("Setting " + selectedCircle.name + " as Initial State");
                     struct.setInitialState(selectedCircle);
                     repaint();
                 }
@@ -65,7 +65,7 @@ class RightPanel extends JPanel {
         setFinal.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedCircle != null) {
-                    System.out.println("Toggling Final State for " + selectedCircle.name);
+                    //System.out.println("Toggling Final State for " + selectedCircle.name);
                     struct.toggleFinalState(selectedCircle);
                     repaint();
                 }
@@ -76,7 +76,7 @@ class RightPanel extends JPanel {
         deleteState.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedCircle != null) {
-                    System.out.println("Deleting State " + selectedCircle.name);
+                    //System.out.println("Deleting State " + selectedCircle.name);
                     Circle toDelete = selectedCircle;
                     selectedCircle = null;
                     struct.removeState(toDelete);
@@ -128,7 +128,7 @@ class RightPanel extends JPanel {
                     if (selectedCircle != null) {
                         offsetX = e.getX() - selectedCircle.x;
                         offsetY = e.getY() - selectedCircle.y;
-                        System.out.println("Selected Circle: " + selectedCircle.name);
+                        //System.out.println("Selected Circle: " + selectedCircle.name);
                     }
                     repaint();
                 }
